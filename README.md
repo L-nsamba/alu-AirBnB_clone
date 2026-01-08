@@ -27,57 +27,61 @@ Update an attribute of an object | ```(hbnb) update <class> <id> <attribute name
 
 ### Non-interactive mode example
 
-```bash
+Non-interactive mode example
 $ echo "help" | ./console.py
 (hbnb)
 
 Documented commands (type help <topic>):
 ========================================
 EOF  all  count  create  destroy  help  quit  show  update
-Models :penguin:
-The folder models contains all the classes used in this project.
+
+Models
+
+The models directory contains all the classes used in this project.
 
 File	Description	Attributes
-base_model.py	BaseModel class for all the other classes	id, created_at, updated_at
-user.py	User class for future user information	email, password, first_name, last_name
-amenity.py	Amenity class for future amenity information	name
-city.py	City class for future location information	state_id, name
-state.py	State class for future location information	name
-place.py	Place class for future accommodation information	city_id, user_id, name, description, number_rooms, number_bathrooms, max_guest, price_by_night, latitude, longitude, amenity_ids
-review.py	Review class for future user or host review information	place_id, user_id, text
+base_model.py	BaseModel class for all other classes	id, created_at, updated_at
+user.py	User class for user information	email, password, first_name, last_name
+amenity.py	Amenity class for amenity information	name
+city.py	City class for city information	state_id, name
+state.py	State class for state information	name
+place.py	Place class for accommodation information	city_id, user_id, name, description, number_rooms, number_bathrooms, max_guest, price_by_night, latitude, longitude, amenity_ids
+review.py	Review class for user or host reviews	place_id, user_id, text
+File Storage
 
-File storage :baggage_claim:
-The folder engine manages the serialization and deserialization of all the data, following a JSON format.
+The engine directory manages the serialization and deserialization of all data using JSON format.
 
-A FileStorage class is defined in file_storage.py with methods that follow this flow:
+A FileStorage class is defined in file_storage.py and follows the flow below:
 
-text
-Copy code
 <object> -> to_dict() -> <dictionary> -> JSON dump -> <json string> -> FILE
 -> <json string> -> JSON load -> <dictionary> -> <object>
-The init.py file contains the instantiation of the FileStorage class called storage, followed by a call to the method reload() on that instance.
-This allows the storage to be reloaded automatically at initialization, which recovers the serialized data.
 
-Tests :straight_ruler:
-All the code is tested with the unittest module.
-The tests for the classes are located in the tests folder.
 
-To run the entire test suite simultaneously, execute:
+The __init__.py file instantiates the FileStorage class as storage and calls the reload() method.
+This ensures all serialized data is automatically loaded when the application starts.
 
-bash
-Copy code
+Tests
+
+All code is tested using the unittest module.
+Test files are located in the tests directory.
+
+Run all tests with:
+
 $ python3 -m unittest discover tests
-Alternatively, you can specify a single test file to run:
 
-bash
-Copy code
+
+Run a specific test file with:
+
 $ python3 -m unittest tests/test_console.py
-Authors :black_nib:
+
+Authors
+
 Nkem Jeferson Achia
-GitHub: NkemJefersonAchia
+GitHub: https://github.com/NkemJefersonAchia
+
 Email: j.nkem@alustudent.com
 
 Leon Nsamba
-GitHub: L-nsamba
-Email: l.nsamba@alustudent.com
+GitHub: https://github.com/l-nsamba
 
+Email: l.nsamba@alustudent.com
