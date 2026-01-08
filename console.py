@@ -37,25 +37,20 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def do_create(self, arg):
-        """
-        Creates a new instance of BaseModel, saves it, and prints the id.
-        Usage: create <class name>
-        """
-        if not arg:
+        """Creates a new instance of BaseModel, saves it, and prints the id."""
+        args = shlex.split(arg)
+        if len(args) == 0:
             print("** class name missing **")
             return
-        if arg not in classes:
+        if args[0] not in classes:
             print("** class doesn't exist **")
             return
-        new_instance = classes[arg]()
+        new_instance = classes[args[0]]()
         new_instance.save()
         print(new_instance.id)
 
     def do_show(self, arg):
-        """
-        Prints the string representation of an instance.
-        Usage: show <class name> <id>
-        """
+        """Prints the string representation of an instance."""
         args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
@@ -67,17 +62,13 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = "{}.{}".format(args[0], args[1])
-        objects = storage.all()
-        if key not in objects:
+        if key not in storage.all():
             print("** no instance found **")
             return
-        print(objects[key])
+        print(storage.all()[key])
 
     def do_destroy(self, arg):
-        """
-        Deletes an instance based on the class name and id.
-        Usage: destroy <class name> <id>
-        """
+        """Deletes an instance based on the class name and id."""
         args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
@@ -89,18 +80,14 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = "{}.{}".format(args[0], args[1])
-        objects = storage.all()
-        if key not in objects:
+        if key not in storage.all():
             print("** no instance found **")
             return
-        del objects[key]
+        del storage.all()[key]
         storage.save()
 
     def do_all(self, arg):
-        """
-        Prints all string representations of all instances.
-        Usage: all [<class name>]
-        """
+        """Prints all string representations of all instances."""
         args = shlex.split(arg)
         objects = storage.all()
         if len(args) == 0:
@@ -113,10 +100,7 @@ class HBNBCommand(cmd.Cmd):
                    if key.startswith(args[0] + ".")])
 
     def do_update(self, arg):
-        """
-        Updates an instance by adding or updating attribute.
-        Usage: update <class name> <id> <attribute name> "<attribute value>"
-        """
+        """Updates an instance by adding or updating attribute."""
         args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
@@ -128,8 +112,7 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = "{}.{}".format(args[0], args[1])
-        objects = storage.all()
-        if key not in objects:
+        if key not in storage.all():
             print("** no instance found **")
             return
         if len(args) == 2:
@@ -139,7 +122,7 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
 
-        obj = objects[key]
+        obj = storage.all()[key]
         attr_name = args[2]
         attr_value = args[3]
 
