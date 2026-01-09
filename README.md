@@ -1,6 +1,6 @@
 # alu-AirBnB
 
-An AirBnB clone.
+This is an AirBnB clone collaborative project.
 
 ---
 
