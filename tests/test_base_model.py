@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Test of comment"""
+"""Random comment"""
 from models.base_model import BaseModel
 
 my_model = BaseModel()
