@@ -43,21 +43,21 @@ class TestFileStorage_methods(unittest.TestCase):
     """Unittests for testing methods of the FileStorage class."""
 
     @classmethod
-    def setUp(self):
+    def setUp(cls):
         try:
             os.rename("file.json", "tmp")
-        except IOError:
+        except FileNotFoundError:
             pass
 
     @classmethod
-    def tearDown(self):
+    def tearDown(cls):
         try:
             os.remove("file.json")
-        except IOError:
+        except FileNotFoundError:
             pass
         try:
             os.rename("tmp", "file.json")
-        except IOError:
+        except FileNotFoundError:
             pass
         FileStorage._FileStorage__objects = {}
 
@@ -122,7 +122,6 @@ class TestFileStorage_methods(unittest.TestCase):
         models.storage.new(am)
         models.storage.new(rv)
         models.storage.save()
-        save_text = ""
         with open("file.json", "r") as f:
             save_text = f.read()
             self.assertIn("BaseModel." + bm.id, save_text)
@@ -164,7 +163,14 @@ class TestFileStorage_methods(unittest.TestCase):
         self.assertIn("Review." + rv.id, objs)
 
     def test_reload_no_file(self):
-	self.assertRaises(FileNotFoundError, models.storage.reload)
+        """Reload should not raise an error if file.json doesn't exist."""
+        if os.path.exists("file.json"):
+            os.remove("file.json")
+        try:
+            models.storage.reload()  # Should silently do nothing
+        except Exception as e:
+            self.fail(f"reload() raised {type(e).__name__} unexpectedly!")
+
     def test_reload_with_arg(self):
         with self.assertRaises(TypeError):
             models.storage.reload(None)
