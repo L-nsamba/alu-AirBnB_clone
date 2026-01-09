@@ -1,63 +1,51 @@
 #!/usr/bin/python3
-"""Defines BaseModel class."""
-import models
-from uuid import uuid4
+"""This module defines the BaseModel class."""
+import uuid
 from datetime import datetime
+import models
 
 
 class BaseModel:
-    """
-        Class Base
-        Defines all common attributes/methods for other classes
-        Attr :
-                id: string - assigned with an uuid when an instance is created
-                created_at: datetime - assigned with the current datetime
-                when an instance is created
-
-                updated_at: datetime - assigned with the current datetime
-                when an instance is created.
-                It will be updated every time the object change.
-    """
+    """Base class for all models in the AirBnB clone project."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize new BaseModel."""
+        """Initialize a new BaseModel instance.
 
-        tform = "%Y-%m-%dT%H:%M:%S.%f"
-
-        self.id = str(uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-
+        If kwargs is provided (from reload), use them to set attributes.
+        Otherwise, generate a new id and timestamps, and register the instance.
+        """
         if kwargs:
-            kwargs["created_at"] = datetime.strptime(
-                kwargs["created_at"], tform)
-            kwargs["updated_at"] = datetime.strptime(
-                kwargs["updated_at"], tform)
-            del kwargs["__class__"]
-            self.__dict__.update(kwargs)
+            for key, value in kwargs.items():
+                if key in ("created_at", "updated_at"):
+                    setattr(self, key, datetime.fromisoformat(value))
+                else:
+                    setattr(self, key, value)
+            # Ensure essential attributes exist
+            if "id" not in kwargs:
+                self.id = str(uuid.uuid4())
+            if "created_at" not in kwargs:
+                self.created_at = datetime.now()
+            if "updated_at" not in kwargs:
+                self.updated_at = datetime.now()
         else:
-            self.id = str(uuid4())
+            self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             models.storage.new(self)
 
+    def __str__(self):
+        """Return string representation of the BaseModel instance."""
+        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+
     def save(self):
-        """Set updated_at with current datetime."""
+        """Update updated_at timestamp and save instance to storage."""
         self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
-        """Return dictionary of BaseModel instance.
-
-        Includes key/value pair __class__.
-        """
-        rdict = self.__dict__.copy()
-        rdict["created_at"] = self.created_at.isoformat()
-        rdict["updated_at"] = self.updated_at.isoformat()
-        rdict["__class__"] = self.__class__.__name__
-        return rdict
-
-    def __str__(self):
-        """Return print/str representation of BaseModel instance."""
-        clname = self.__class__.__name__
-        return "[{}] ({}) {}".format(clname, self.id, self.__dict__)
+        """Return a dictionary of the instance for serialization."""
+        my_dict = self.__dict__.copy()
+        my_dict["__class__"] = self.__class__.__name__
+        my_dict["created_at"] = self.created_at.isoformat()
+        my_dict["updated_at"] = self.updated_at.isoformat()
+        return my_dict
