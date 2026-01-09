@@ -7,10 +7,12 @@ import cmd
 import shlex
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
 
-# Add other classes here later (User, Place, etc)
+
 classes = {
-    "BaseModel": BaseModel
+    "BaseModel": BaseModel,
+    "User": User
 }
 
 
@@ -21,11 +23,11 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_quit(self, arg):
-        """Quit command to exit the program"""
+        """Quit command"""
         return True
 
     def do_EOF(self, arg):
-        """EOF command to exit the program"""
+        """Exit on EOF"""
         print()
         return True
 
@@ -61,14 +63,13 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
 
-        key = f"{args[0]}.{args[1]}"
-        objects = storage.all()
+        key = "{}.{}".format(args[0], args[1])
 
-        if key not in objects:
+        if key not in storage.all():
             print("** no instance found **")
             return
 
-        print(objects[key])
+        print(storage.all()[key])
 
     # ---------------- DESTROY ----------------
     def do_destroy(self, arg):
@@ -86,27 +87,25 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
 
-        key = f"{args[0]}.{args[1]}"
-        objects = storage.all()
+        key = "{}.{}".format(args[0], args[1])
 
-        if key not in objects:
+        if key not in storage.all():
             print("** no instance found **")
             return
 
-        del objects[key]
+        del storage.all()[key]
         storage.save()
 
     # ---------------- ALL ----------------
     def do_all(self, arg):
         args = shlex.split(arg)
-        objects = storage.all()
         result = []
 
         if len(args) > 0 and args[0] not in classes:
             print("** class doesn't exist **")
             return
 
-        for obj in objects.values():
+        for obj in storage.all().values():
             if len(args) == 0 or obj.__class__.__name__ == args[0]:
                 result.append(str(obj))
 
@@ -128,10 +127,9 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
 
-        key = f"{args[0]}.{args[1]}"
-        objects = storage.all()
+        key = "{}.{}".format(args[0], args[1])
 
-        if key not in objects:
+        if key not in storage.all():
             print("** no instance found **")
             return
 
@@ -143,19 +141,17 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
 
-        obj = objects[key]
+        obj = storage.all()[key]
         attr = args[2]
         value = args[3]
 
-        # Cast value to correct type if attribute exists
+        # Cast value
         if hasattr(obj, attr):
-            current_type = type(getattr(obj, attr))
             try:
-                value = current_type(value)
+                value = type(getattr(obj, attr))(value)
             except Exception:
                 pass
         else:
-            # Try int or float
             try:
                 value = int(value)
             except ValueError:
