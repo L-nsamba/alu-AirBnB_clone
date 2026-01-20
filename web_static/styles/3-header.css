@@ -1,0 +1,9 @@
+header {
+  color: white;
+  background-image: url("../images/icon.png");
+  background-repeat: no-repeat;
+  background-position-x: 20px;
+  height: 70px;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+}
